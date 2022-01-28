@@ -1,0 +1,34 @@
+<div class="container">
+    <h1>Listado de Categorías</h1>
+
+    <mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef> Identificador </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.id}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef> Nombre categoría  </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <button mat-icon-button color="primary">
+                    <mat-icon (click)="editCategory(element)">edit</mat-icon>
+                </button>
+                <button mat-icon-button color="accent">
+                    <mat-icon (click)="deleteCategory(element)">clear</mat-icon>
+                </button>
+            </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+
+    <div class="buttons">
+        <button mat-flat-button color="primary" (click)="createCategory()">Nueva categoría</button> 
+    </div>   
+</div>

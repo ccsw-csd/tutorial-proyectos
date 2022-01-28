@@ -1,0 +1,38 @@
+.container {
+    margin: 20px;
+
+    .filters {
+        display: flex;
+
+        mat-form-field {
+            width: 300px;
+            margin-right: 20px;
+        }
+
+        .buttons {
+            flex: auto;
+            align-self: center;
+
+            button {
+                margin-left: 15px;
+            }
+        }
+    }
+
+    .game-list { 
+        margin-top: 20px;
+        margin-bottom: 20px;
+
+        display: flex;
+        flex-flow: wrap;
+        overflow: auto;  
+    }
+
+    .buttons {
+        text-align: right;
+    }
+}
+
+button {
+    width: 125px;
+}

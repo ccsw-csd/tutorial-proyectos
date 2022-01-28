@@ -1,0 +1,28 @@
+<div class="container">
+    <h1 *ngIf="author.id == null">Crear autor</h1>
+    <h1 *ngIf="author.id != null">Modificar autor</h1>
+
+    <form>
+        <mat-form-field>
+            <mat-label>Identificador</mat-label>
+            <input type="number" matInput placeholder="Identificador" [(ngModel)]="author.id" name="id" disabled>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Nombre</mat-label>
+            <input type="text" matInput placeholder="Nombre del autor" [(ngModel)]="author.name" name="name" required>
+            <mat-error>El nombre no puede estar vacío</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Nacionalidad</mat-label>
+            <input type="text" matInput placeholder="Nacionalidad del autor" [(ngModel)]="author.nationality" name="nationality" required>
+            <mat-error>La nacionalidad no puede estar vacía</mat-error>
+        </mat-form-field>
+    </form>
+
+    <div class="buttons">
+        <button mat-stroked-button (click)="onClose()">Cerrar</button>
+        <button mat-flat-button color="primary" (click)="onSave()">Guardar</button>
+    </div>
+</div>
