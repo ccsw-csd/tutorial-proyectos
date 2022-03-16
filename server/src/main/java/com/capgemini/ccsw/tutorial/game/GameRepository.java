@@ -10,7 +10,7 @@ import com.capgemini.ccsw.tutorial.game.model.Game;
 
 public interface GameRepository extends CrudRepository<Game, Long> {
 
-   @Query("select g from Game g where (:title is null or g.title like '%'||:title||'%') and (:category is null or g.category.id = :category)")
-   List<Game> find(@Param("title") String title, @Param("category") Long category);
+    @Query("select g from Game g where (:title is null or g.title like '%'||:title||'%') and (:category is null or g.category.id = :category)")
+    List<Game> find(@Param("title") String title, @Param("category") Long category);
 
 }
