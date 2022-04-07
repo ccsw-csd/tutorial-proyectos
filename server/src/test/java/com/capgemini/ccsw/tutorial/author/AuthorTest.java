@@ -2,183 +2,54 @@ package com.capgemini.ccsw.tutorial.author;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.capgemini.ccsw.tutorial.author.model.AuthorDto;
-import com.capgemini.ccsw.tutorial.author.model.AuthorSearchDto;
+import com.capgemini.ccsw.tutorial.author.model.Author;
 
-@SpringBootTest
-@Transactional
+import java.util.Optional;
+
+@ExtendWith(MockitoExtension.class)
 public class AuthorTest {
 
-    private static final int TOTAL_AUTORS = 6;
+   public static final Long EXISTS_AUTHOR_ID = 1L;
+   public static final Long NOT_EXISTS_AUTHOR_ID = 0L;
 
-    @Autowired
-    private AuthorController authorController;
+   @Mock
+   private AuthorRepository authorRepository;
 
-    @Test
-    public void findAllShouldReturnAllAuthorInDB() {
-        assertNotNull(authorController);
+   @InjectMocks
+   private AuthorServiceImpl authorService;
 
-        List<AuthorDto> authors = authorController.findAll();
+   @Test
+   public void getExistsAuthorIdShouldReturnAuthor() {
 
-        assertNotNull(authors);
+      Author author = mock(Author.class);
+      when(author.getId()).thenReturn(EXISTS_AUTHOR_ID);
+      when(authorRepository.findById(EXISTS_AUTHOR_ID)).thenReturn(Optional.of(author));
 
-        assertEquals(TOTAL_AUTORS, authors.size());
+      Author authorResponse = authorService.get(EXISTS_AUTHOR_ID);
 
-    }
+      assertNotNull(authorResponse);
 
-    @Test
-    public void findFirstPageWithFiveSizeShouldReturnFirstFiveResults() {
+      assertEquals(EXISTS_AUTHOR_ID, authorResponse.getId());
+   }
 
-        int pageSize = 5;
+   @Test
+   public void getNotExistsAuthorIdShouldReturnNull() {
 
-        assertNotNull(authorController);
+      when(authorRepository.findById(NOT_EXISTS_AUTHOR_ID)).thenReturn(Optional.empty());
 
-        AuthorSearchDto dto = new AuthorSearchDto();
-        dto.setPageable(PageRequest.of(0, pageSize));
+      Author author = authorService.get(NOT_EXISTS_AUTHOR_ID);
 
-        Page<AuthorDto> resultPage = authorController.findPage(dto);
+      assertNull(author);
+   }
 
-        assertNotNull(resultPage);
-
-        assertEquals(TOTAL_AUTORS, resultPage.getTotalElements());
-        assertEquals(pageSize, resultPage.getContent().size());
-
-    }
-
-    @Test
-    public void findSecondPageWithFiveSizeShouldReturnLastResult() {
-
-        int pageSize = 5;
-        int elementsCount = TOTAL_AUTORS - pageSize;
-
-        assertNotNull(authorController);
-
-        AuthorSearchDto searchDto = new AuthorSearchDto();
-        searchDto.setPageable(PageRequest.of(1, pageSize));
-
-        Page<AuthorDto> resultPage = authorController.findPage(searchDto);
-
-        assertNotNull(resultPage);
-
-        assertEquals(TOTAL_AUTORS, resultPage.getTotalElements());
-        assertEquals(elementsCount, resultPage.getContent().size());
-
-    }
-
-    @Test
-    public void saveWithoutIdShouldCreateNewAuthor() {
-
-        assertNotNull(authorController);
-
-        String newAuthorName = "Nuevo Autor";
-        String newNationality = "Nueva Nacionalidad";
-
-        long newAuthorId = TOTAL_AUTORS + 1;
-        long newAuthorSize = TOTAL_AUTORS + 1;
-
-        AuthorDto dto = new AuthorDto();
-        dto.setName(newAuthorName);
-        dto.setNationality(newNationality);
-
-        authorController.save(null, dto);
-
-        AuthorSearchDto searchDto = new AuthorSearchDto();
-        searchDto.setPageable(PageRequest.of(0, (int) newAuthorSize));
-
-        Page<AuthorDto> resultPage = authorController.findPage(searchDto);
-
-        assertNotNull(resultPage);
-        assertEquals(newAuthorSize, resultPage.getTotalElements());
-
-        AuthorDto author = resultPage.getContent().stream().filter(item -> item.getId().equals(newAuthorId)).findFirst().orElse(null);
-        assertNotNull(author);
-        assertEquals(newAuthorName, author.getName());
-
-    }
-
-    @Test
-    public void modifyWithExistIdShouldModifyAuthor() {
-
-        assertNotNull(authorController);
-
-        String newAuthorName = "Nuevo Autor";
-        String newNationality = "Nueva Nacionalidad";
-        long authorId = 3;
-
-        AuthorDto dto = new AuthorDto();
-        dto.setName(newAuthorName);
-        dto.setNationality(newNationality);
-
-        authorController.save(authorId, dto);
-
-        AuthorSearchDto searchDto = new AuthorSearchDto();
-        searchDto.setPageable(PageRequest.of(0, (int) authorId));
-
-        Page<AuthorDto> resultPage = authorController.findPage(searchDto);
-
-        assertNotNull(resultPage);
-        assertEquals(TOTAL_AUTORS, resultPage.getTotalElements());
-
-        AuthorDto author = resultPage.getContent().stream().filter(item -> item.getId().equals(authorId)).findFirst().orElse(null);
-        assertNotNull(author);
-        assertEquals(newAuthorName, author.getName());
-        assertEquals(newNationality, author.getNationality());
-
-    }
-
-    @Test
-    public void modifyWithNotExistIdShouldThrowException() {
-
-        assertNotNull(authorController);
-
-        String newAuthorName = "Nuevo Autor";
-        long authorId = TOTAL_AUTORS + 1;
-
-        AuthorDto dto = new AuthorDto();
-        dto.setName(newAuthorName);
-
-        assertThrows(Exception.class, () -> authorController.save(authorId, dto));
-    }
-
-    @Test
-    public void deleteWithExistsIdShouldDeleteCategory() {
-
-        assertNotNull(authorController);
-
-        long newAuthorsSize = TOTAL_AUTORS - 1;
-        long deleteAuthorId = 6;
-
-        authorController.delete(deleteAuthorId);
-
-        AuthorSearchDto searchDto = new AuthorSearchDto();
-        searchDto.setPageable(PageRequest.of(0, TOTAL_AUTORS));
-
-        Page<AuthorDto> resultPage = authorController.findPage(searchDto);
-
-        assertNotNull(resultPage);
-        assertEquals(newAuthorsSize, resultPage.getTotalElements());
-
-    }
-
-    @Test
-    public void deleteWithNotExistsIdShouldThrowException() {
-
-        assertNotNull(authorController);
-
-        long deleteAuthorId = TOTAL_AUTORS + 1;
-
-        assertThrows(Exception.class, () -> authorController.delete(deleteAuthorId));
-
-    }
 }

@@ -1,127 +1,105 @@
 package com.capgemini.ccsw.tutorial.category;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.capgemini.ccsw.tutorial.category.model.Category;
 import com.capgemini.ccsw.tutorial.category.model.CategoryDto;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SpringBootTest
-@Transactional
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 public class CategoryTest {
 
-   @Autowired
-   private CategoryController categoryController;
+   public static final Long EXISTS_CATEGORY_ID = 1L;
+   public static final Long NOT_EXISTS_CATEGORY_ID = 0L;
+   public static final String CATEGORY_NAME = "CAT1";
+
+   @Mock
+   private CategoryRepository categoryRepository;
+
+   @InjectMocks
+   private CategoryServiceImpl categoryService;
 
    @Test
-   public void findAllShouldReturnAllCategoriesInDB() {
+   public void getExistsCategoryIdShouldReturnCategory() {
 
-      assertNotNull(categoryController);
+      Category category = mock(Category.class);
+      when(category.getId()).thenReturn(EXISTS_CATEGORY_ID);
+      when(categoryRepository.findById(EXISTS_CATEGORY_ID)).thenReturn(Optional.of(category));
 
-      long categoriesSize = 3;
+      Category categoryResponse = categoryService.get(EXISTS_CATEGORY_ID);
 
-      List<CategoryDto> categories = categoryController.findAll();
+      assertNotNull(categoryResponse);
+      assertEquals(EXISTS_CATEGORY_ID, category.getId());
+   }
+
+   @Test
+   public void getNotExistsCategoryIdShouldReturnNull() {
+
+      when(categoryRepository.findById(NOT_EXISTS_CATEGORY_ID)).thenReturn(Optional.empty());
+
+      Category category = categoryService.get(NOT_EXISTS_CATEGORY_ID);
+
+      assertNull(category);
+   }
+
+   @Test
+   public void findAllShouldReturnAllCategories() {
+
+      List<Category> list = new ArrayList<>();
+      list.add(mock(Category.class));
+
+      when(categoryRepository.findAll()).thenReturn(list);
+
+      List<Category> categories = categoryService.findAll();
 
       assertNotNull(categories);
-      assertEquals(categoriesSize, categories.size());
-
+      assertEquals(1, categories.size());
    }
 
    @Test
-   public void saveWithoutIdShouldCreateNewCategory() {
+   public void saveNotExistsCategoryIdShouldInsert() {
 
-      assertNotNull(categoryController);
+      CategoryDto categoryDto = new CategoryDto();
+      categoryDto.setName(CATEGORY_NAME);
 
-      String newCategoryName = "Nueva Categoria";
-      long newCategoryId = 4;
-      long newCategoriesSize = newCategoryId;
+      ArgumentCaptor<Category> category = ArgumentCaptor.forClass(Category.class);
 
-      CategoryDto dto = new CategoryDto();
-      dto.setName(newCategoryName);
+      categoryService.save(null, categoryDto);
 
-      categoryController.save(null, dto);
+      verify(categoryRepository).save(category.capture());
 
-      List<CategoryDto> categories = categoryController.findAll();
-      assertNotNull(categories);
-      assertEquals(newCategoriesSize, categories.size());
-
-      CategoryDto categorySearch = categories.stream().filter(item -> item.getId().equals(newCategoryId)).findFirst().orElse(null);
-      assertNotNull(categorySearch);
-      assertEquals(newCategoryName, categorySearch.getName());
-
+      assertEquals(CATEGORY_NAME, category.getValue().getName());
    }
 
    @Test
-   public void modifyWithExistIdShouldModifyCategory() {
+   public void saveExistsCategoryIdShouldUpdate() {
 
-      assertNotNull(categoryController);
+      CategoryDto categoryDto = new CategoryDto();
+      categoryDto.setName(CATEGORY_NAME);
 
-      String newCategoryName = "Nueva Categoria";
-      long categoryId = 3;
-      long categoriesSize = 3;
+      Category category = mock(Category.class);
+      when(categoryRepository.findById(EXISTS_CATEGORY_ID)).thenReturn(Optional.of(category));
 
-      CategoryDto dto = new CategoryDto();
-      dto.setName(newCategoryName);
+      categoryService.save(EXISTS_CATEGORY_ID, categoryDto);
 
-      categoryController.save(categoryId, dto);
-
-      List<CategoryDto> categories = categoryController.findAll();
-      assertNotNull(categories);
-      assertEquals(categoriesSize, categories.size());
-
-      CategoryDto categorySearch = categories.stream().filter(item -> item.getId().equals(categoryId)).findFirst().orElse(null);
-      assertNotNull(categorySearch);
-      assertEquals(newCategoryName, categorySearch.getName());
-
+      verify(categoryRepository).save(category);
    }
 
    @Test
-   public void modifyWithNotExistIdShouldThrowException() {
+   public void deleteExistsCategoryIdShouldDelete() {
 
-      assertNotNull(categoryController);
+      categoryService.delete(EXISTS_CATEGORY_ID);
 
-      String newCategoryName = "Nueva Categoria";
-      long categoryId = 4;
-
-      CategoryDto dto = new CategoryDto();
-      dto.setName(newCategoryName);
-
-      assertThrows(NullPointerException.class, () -> categoryController.save(categoryId, dto));
+      verify(categoryRepository).deleteById(EXISTS_CATEGORY_ID);
    }
-
-   @Test
-   public void deleteWithExistsIdShouldDeleteCategory() {
-
-      assertNotNull(categoryController);
-
-      long newCategoriesSize = 2;
-      long deleteCategoryId = 2;
-
-      categoryController.delete(deleteCategoryId);
-
-      List<CategoryDto> categories = categoryController.findAll();
-
-      assertNotNull(categories);
-      assertEquals(newCategoriesSize, categories.size());
-
-   }
-
-   @Test
-   public void deleteWithNotExistsIdShouldThrowException() {
-
-      assertNotNull(categoryController);
-
-      long deleteCategoryId = 4;
-
-      assertThrows(Exception.class, () -> categoryController.delete(deleteCategoryId));
-
-   }
-
 }
