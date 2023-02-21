@@ -1,0 +1,34 @@
+.container {
+    display: flex;
+    width: 325px;
+
+    mat-card {
+        width: 100%;
+        margin: 10px;
+        display: flex;
+
+        .photo {
+            margin-right: 10px;
+
+            img {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        .detail {
+            .title {
+                font-size: 14px;
+                font-weight: bold;
+            }
+
+            .properties {
+                font-size: 11px;
+
+                div {
+                    height: 15px;
+                }                
+            }
+        }
+    }
+}    
