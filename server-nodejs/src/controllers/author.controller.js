@@ -73,4 +73,3 @@ export const getAuthorsPageable = async (req, res) => {
         });
     }
 }
-

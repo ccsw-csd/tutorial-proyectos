@@ -1,4 +1,5 @@
 import AuthorModel from '../schemas/author.schema.js';
+import { getGame } from './game.service.js';
 
 export const getAuthors = async () => {
     try {
@@ -26,7 +27,7 @@ export const updateAuthor = async (id, data) => {
         }
         return await AuthorModel.findByIdAndUpdate(id, data);
     } catch (e) {
-        throw Error('Error updating author');
+        throw Error(e);
     }
 }
 
@@ -36,13 +37,13 @@ export const deleteAuthor = async (id) => {
         if (!author) {
             throw 'There is no author with that Id';
         }
-        const games = await getGame({ author });
+        const games = await getGame({author});
         if (games.length > 0) {
             throw 'There are games related to this author';
         }
         return await AuthorModel.findByIdAndDelete(id);
-    } catch (err) {
-        throw Error(err);
+    } catch (e) {
+        throw Error(e);
     }
 }
 
@@ -58,8 +59,15 @@ export const getAuthorsPageable = async (page, limit, sort) => {
         };
 
         return await AuthorModel.paginate({}, options);
-    } catch (err) {
-        throw Error('Error deleting author');
+    } catch (e) {
+        throw Error('Error fetching authors page');
     }
 }
 
+export const getAuthor = async (id) => {
+    try {
+        return await AuthorModel.findById(id);
+    } catch (e) {
+        throw Error('There is no author with that Id');
+    }
+}

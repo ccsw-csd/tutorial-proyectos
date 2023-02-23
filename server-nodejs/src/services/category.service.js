@@ -18,8 +18,6 @@ export const getCategories = async function () {
     }
 }
 
-
-
 export const updateCategory = async (id, name) => {
     try {
         const category = await CategoryModel.findById(id);
@@ -28,7 +26,7 @@ export const updateCategory = async (id, name) => {
         }    
         return await CategoryModel.findByIdAndUpdate(id, {name});
     } catch (e) {
-        throw Error('Error updating category');
+        throw Error(e);
     }
 }
 
@@ -45,5 +43,13 @@ export const deleteCategory = async (id) => {
         return await CategoryModel.findByIdAndDelete(id);
     } catch (e) {
         throw Error(e);
+    }
+}
+
+export const getCategory = async (id) => {
+    try {
+        return await CategoryModel.findById(id);
+    } catch (e) {
+        throw Error('There is no category with that Id');
     }
 }

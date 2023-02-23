@@ -27,8 +27,6 @@ export const getCategories = async (req, res) => {
     }
 }
 
-
-
 export const updateCategory = async (req, res) => {
     const categoryId = req.params.id;
     const { name } = req.body;
@@ -55,5 +53,3 @@ export const deleteCategory = async (req, res) => {
         });
     }
 }
-
-

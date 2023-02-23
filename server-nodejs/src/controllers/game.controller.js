@@ -29,7 +29,7 @@ export const createGame = async (req, res) => {
 export const updateGame = async (req, res) => {
     const gameId = req.params.id;
     try {
-        await GameModel.updateGame(gameId, req.body);
+        await GameService.updateGame(gameId, req.body);
         res.status(200).json(1);
     } catch (err) {
         res.status(400).json({

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
-import validateFields from '../middlewares/validate-Fields.js';
+import validateFields from '../middlewares/validateFields.js';
 import { createAuthor, deleteAuthor, getAuthors, updateAuthor, getAuthorsPageable } from '../controllers/author.controller.js';
 const authorRouter = Router();
 

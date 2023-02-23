@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
-import validateFields from '../middlewares/validate-Fields.js';
+import validateFields from '../middlewares/validateFields.js';
 import { getCategories, createCategory, deleteCategory, updateCategory } from '../controllers/category.controller.js';
 const categoryRouter = Router();
 

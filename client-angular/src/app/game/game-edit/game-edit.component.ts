@@ -38,7 +38,7 @@ export class GameEditComponent implements OnInit {
             categories => {
                 this.categories = categories;
 
-                if (this.data.game.category != null) {
+                if (this.data.game?.category != null) {
                     let categoryFilter: Category[] = categories.filter(category => category.id == this.data.game.category.id);
                     if (categoryFilter != null) {
                         this.game.category = categoryFilter[0];
@@ -51,7 +51,7 @@ export class GameEditComponent implements OnInit {
             authors => {
                 this.authors = authors
 
-                if (this.data.game.author != null) {
+                if (this.data.game?.author != null) {
                     let authorFilter: Author[] = authors.filter(author => author.id == this.data.game.author.id);
                     if (authorFilter != null) {
                         this.game.author = authorFilter[0];
