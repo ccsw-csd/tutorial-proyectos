@@ -1,43 +1,45 @@
 package com.ccsw.tutorial.category.model;
 
 /**
-* @author ccsw
-*/
+ * @author ccsw
+ *
+ */
 public class CategoryDto {
-   private Long id;
 
-   private String name;
+    private Long id;
 
-   /**
-   * @return id
-   */
-   public Long getId() {
+    private String name;
 
-      return this.id;
-   }
+    /**
+     * @return id
+     */
+    public Long getId() {
 
-   /**
-   * @param id new value of {@link #getId}.
-   */
-   public void setId(Long id) {
+        return this.id;
+    }
 
-      this.id = id;
-   }
+    /**
+     * @param id new value of {@link #getId}.
+     */
+    public void setId(Long id) {
 
-   /**
-   * @return name
-   */
-   public String getName() {
+        this.id = id;
+    }
 
-      return this.name;
-   }
+    /**
+     * @return name
+     */
+    public String getName() {
 
-   /**
-   * @param name new value of {@link #getName}.
-   */
-   public void setName(String name) {
+        return this.name;
+    }
 
-      this.name = name;
-   }
+    /**
+     * @param name new value of {@link #getName}.
+     */
+    public void setName(String name) {
+
+        this.name = name;
+    }
 
 }

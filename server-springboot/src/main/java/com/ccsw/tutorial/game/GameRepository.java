@@ -1,16 +1,21 @@
 package com.ccsw.tutorial.game;
 
+import com.ccsw.tutorial.game.model.Game;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.CrudRepository;
+
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
+/**
+ * @author ccsw
+ *
+ */
+public interface GameRepository extends CrudRepository<Game, Long>, JpaSpecificationExecutor<Game> {
 
-import com.ccsw.tutorial.game.model.Game;
-
-public interface GameRepository extends CrudRepository<Game, Long> {
-
-    @Query("select g from Game g where (:title is null or g.title like '%'||:title||'%') and (:category is null or g.category.id = :category)")
-    List<Game> find(@Param("title") String title, @Param("category") Long category);
+    @Override
+    @EntityGraph(attributePaths = {"category", "author"})
+    List<Game> findAll(Specification<Game> spec);
 
 }

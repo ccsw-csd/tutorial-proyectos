@@ -1,32 +1,29 @@
 package com.ccsw.tutorial.author;
 
+import com.ccsw.tutorial.author.model.AuthorDto;
+import com.ccsw.tutorial.author.model.AuthorSearchDto;
+import com.ccsw.tutorial.common.pagination.PageableRequest;
+import com.ccsw.tutorial.config.ResponsePage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
-
-import com.ccsw.tutorial.author.model.AuthorDto;
-import com.ccsw.tutorial.author.model.AuthorSearchDto;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class AuthorIT {
 
    public static final String LOCALHOST = "http://localhost:";
-   public static final String SERVICE_PATH = "/author/";
+   public static final String SERVICE_PATH = "/author";
 
    public static final Long DELETE_AUTHOR_ID = 6L;
    public static final Long MODIFY_AUTHOR_ID = 3L;
@@ -44,7 +41,7 @@ public class AuthorIT {
 
    ParameterizedTypeReference<List<AuthorDto>> responseTypeList = new ParameterizedTypeReference<List<AuthorDto>>(){};
 
-   ParameterizedTypeReference<Page<AuthorDto>> responseTypePage = new ParameterizedTypeReference<Page<AuthorDto>>(){};
+   ParameterizedTypeReference<ResponsePage<AuthorDto>> responseTypePage = new ParameterizedTypeReference<ResponsePage<AuthorDto>>(){};
 
    @Test
    public void findAllShouldReturnAllAuthor() {
@@ -59,9 +56,9 @@ public class AuthorIT {
    public void findFirstPageWithFiveSizeShouldReturnFirstFiveResults() {
 
       AuthorSearchDto searchDto = new AuthorSearchDto();
-      searchDto.setPageable(PageRequest.of(0, PAGE_SIZE));
+      searchDto.setPageable(new PageableRequest(0, PAGE_SIZE));
 
-      ResponseEntity<Page<AuthorDto>> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
+      ResponseEntity<ResponsePage<AuthorDto>> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
 
       assertNotNull(response);
       assertEquals(TOTAL_AUTHORS, response.getBody().getTotalElements());
@@ -74,9 +71,9 @@ public class AuthorIT {
       int elementsCount = TOTAL_AUTHORS - PAGE_SIZE;
 
       AuthorSearchDto searchDto = new AuthorSearchDto();
-      searchDto.setPageable(PageRequest.of(1, PAGE_SIZE));
+      searchDto.setPageable(new PageableRequest(1, PAGE_SIZE));
 
-      ResponseEntity<Page<AuthorDto>> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
+      ResponseEntity<ResponsePage<AuthorDto>> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
 
       assertNotNull(response);
       assertEquals(TOTAL_AUTHORS, response.getBody().getTotalElements());
@@ -96,9 +93,9 @@ public class AuthorIT {
       restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
 
       AuthorSearchDto searchDto = new AuthorSearchDto();
-      searchDto.setPageable(PageRequest.of(0, (int) newAuthorSize));
+      searchDto.setPageable(new PageableRequest(0, (int) newAuthorSize));
 
-      ResponseEntity<Page<AuthorDto>> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
+      ResponseEntity<ResponsePage<AuthorDto>> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
 
       assertNotNull(response);
       assertEquals(newAuthorSize, response.getBody().getTotalElements());
@@ -106,7 +103,6 @@ public class AuthorIT {
       AuthorDto author = response.getBody().getContent().stream().filter(item -> item.getId().equals(newAuthorId)).findFirst().orElse(null);
       assertNotNull(author);
       assertEquals(NEW_AUTHOR_NAME, author.getName());
-
    }
 
    @Test
@@ -116,12 +112,12 @@ public class AuthorIT {
       dto.setName(NEW_AUTHOR_NAME);
       dto.setNationality(NEW_NATIONALITY);
 
-      restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + MODIFY_AUTHOR_ID, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
+      restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + "/" + MODIFY_AUTHOR_ID, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
 
       AuthorSearchDto searchDto = new AuthorSearchDto();
-      searchDto.setPageable(PageRequest.of(0, PAGE_SIZE));
+      searchDto.setPageable(new PageableRequest(0, PAGE_SIZE));
 
-      ResponseEntity<Page<AuthorDto>> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
+      ResponseEntity<ResponsePage<AuthorDto>> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
 
       assertNotNull(response);
       assertEquals(TOTAL_AUTHORS, response.getBody().getTotalElements());
@@ -130,7 +126,6 @@ public class AuthorIT {
       assertNotNull(author);
       assertEquals(NEW_AUTHOR_NAME, author.getName());
       assertEquals(NEW_NATIONALITY, author.getNationality());
-
    }
 
    @Test
@@ -141,7 +136,7 @@ public class AuthorIT {
       AuthorDto dto = new AuthorDto();
       dto.setName(NEW_AUTHOR_NAME);
 
-      ResponseEntity<?> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + authorId, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
+      ResponseEntity<?> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + "/" + authorId, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
 
       assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
    }
@@ -151,16 +146,15 @@ public class AuthorIT {
 
       long newAuthorsSize = TOTAL_AUTHORS - 1;
 
-      restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + DELETE_AUTHOR_ID, HttpMethod.DELETE, null, Void.class);
+      restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + "/" + DELETE_AUTHOR_ID, HttpMethod.DELETE, null, Void.class);
 
       AuthorSearchDto searchDto = new AuthorSearchDto();
-      searchDto.setPageable(PageRequest.of(0, TOTAL_AUTHORS));
+      searchDto.setPageable(new PageableRequest(0, TOTAL_AUTHORS));
 
-      ResponseEntity<Page<AuthorDto>> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
+      ResponseEntity<ResponsePage<AuthorDto>> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
 
       assertNotNull(response);
       assertEquals(newAuthorsSize, response.getBody().getTotalElements());
-
    }
 
    @Test
@@ -168,8 +162,9 @@ public class AuthorIT {
 
       long deleteAuthorId = TOTAL_AUTHORS + 1;
 
-      ResponseEntity<?> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + deleteAuthorId, HttpMethod.DELETE, null, Void.class);
+      ResponseEntity<?> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + "/" + deleteAuthorId, HttpMethod.DELETE, null, Void.class);
 
       assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
    }
+
 }

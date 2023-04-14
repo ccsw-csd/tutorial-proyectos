@@ -1,18 +1,17 @@
-INSERT INTO CATEGORY(id, name) VALUES (1, 'Eurogames');
-INSERT INTO CATEGORY(id, name) VALUES (2, 'Ameritrash');
-INSERT INTO CATEGORY(id, name) VALUES (3, 'Familiar');
+INSERT INTO category(name) VALUES ('Eurogames');
+INSERT INTO category(name) VALUES ('Ameritrash');
+INSERT INTO category(name) VALUES ('Familiar');
 
+INSERT INTO author(name, nationality) VALUES ('Alan R. Moon', 'US');
+INSERT INTO author(name, nationality) VALUES ('Vital Lacerda', 'PT');
+INSERT INTO author(name, nationality) VALUES ('Simone Luciani', 'IT');
+INSERT INTO author(name, nationality) VALUES ('Perepau Llistosella', 'ES');
+INSERT INTO author(name, nationality) VALUES ('Michael Kiesling', 'DE');
+INSERT INTO author(name, nationality) VALUES ('Phil Walker-Harding', 'US');
 
-INSERT INTO AUTHOR(id, name, nationality) VALUES (1, 'Alan R. Moon', 'US');
-INSERT INTO AUTHOR(id, name, nationality) VALUES (2, 'Vital Lacerda', 'PT');
-INSERT INTO AUTHOR(id, name, nationality) VALUES (3, 'Simone Luciani', 'IT');
-INSERT INTO AUTHOR(id, name, nationality) VALUES (4, 'Perepau Llistosella', 'ES');
-INSERT INTO AUTHOR(id, name, nationality) VALUES (5, 'Michael Kiesling', 'DE');
-INSERT INTO AUTHOR(id, name, nationality) VALUES (6, 'Phil Walker-Harding', 'US');
-
-INSERT INTO GAME(id, title, age, category_id, author_id) VALUES (1, 'On Mars', '14', 1, 2);
-INSERT INTO GAME(id, title, age, category_id, author_id) VALUES (2, 'Aventureros al tren', '8', 3, 1);
-INSERT INTO GAME(id, title, age, category_id, author_id) VALUES (3, '1920: Wall Street', '12', 1, 4);
-INSERT INTO GAME(id, title, age, category_id, author_id) VALUES (4, 'Barrage', '14', 1, 3);
-INSERT INTO GAME(id, title, age, category_id, author_id) VALUES (5, 'Los viajes de Marco Polo', '12', 1, 3);
-INSERT INTO GAME(id, title, age, category_id, author_id) VALUES (6, 'Azul', '8', 3, 5);
+INSERT INTO game(title, age, category_id, author_id) VALUES ('On Mars', '14', 1, 2);
+INSERT INTO game(title, age, category_id, author_id) VALUES ('Aventureros al tren', '8', 3, 1);
+INSERT INTO game(title, age, category_id, author_id) VALUES ('1920: Wall Street', '12', 1, 4);
+INSERT INTO game(title, age, category_id, author_id) VALUES ('Barrage', '14', 1, 3);
+INSERT INTO game(title, age, category_id, author_id) VALUES ('Los viajes de Marco Polo', '12', 1, 3);
+INSERT INTO game(title, age, category_id, author_id) VALUES ('Azul', '8', 3, 5);

@@ -1,21 +1,21 @@
 package com.ccsw.tutorial.category;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.ccsw.tutorial.category.model.Category;
 import com.ccsw.tutorial.category.model.CategoryDto;
-import com.devonfw.module.beanmapping.common.api.BeanMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.dozer.DozerBeanMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
-* @author ccsw
-*/
+ * @author ccsw
+ *
+ */
+@Tag(name = "Category", description = "API of Category")
 @RequestMapping(value = "/category")
 @RestController
 @CrossOrigin(origins = "*")
@@ -25,23 +25,31 @@ public class CategoryController {
     CategoryService categoryService;
 
     @Autowired
-    BeanMapper beanMapper;
+    DozerBeanMapper mapper;
 
     /**
-    * Método para recuperar todas las {@link com.ccsw.tutorial.category.model.Category}
-    * @return
-    */
+     * Método para recuperar todas las {@link Category}
+     *
+     * @return {@link List} de {@link CategoryDto}
+     */
+    @Operation(summary = "Find", description = "Method that return a list of Categories"
+    )
     @RequestMapping(path = "", method = RequestMethod.GET)
     public List<CategoryDto> findAll() {
 
-        return this.beanMapper.mapList(this.categoryService.findAll(), CategoryDto.class);
+        List<Category> categories = this.categoryService.findAll();
+
+        return categories.stream().map(e -> mapper.map(e, CategoryDto.class)).collect(Collectors.toList());
     }
 
     /**
-    * Método para crear o actualizar una {@link com.ccsw.tutorial.category.model.Category}
-    * @param dto
-    * @return
-    */
+     * Método para crear o actualizar una {@link Category}
+     *
+     * @param id PK de la entidad
+     * @param dto datos de la entidad
+     */
+    @Operation(summary = "Save or Update", description = "Method that saves or updates a Category"
+    )
     @RequestMapping(path = { "", "/{id}" }, method = RequestMethod.PUT)
     public void save(@PathVariable(name = "id", required = false) Long id, @RequestBody CategoryDto dto) {
 
@@ -49,13 +57,15 @@ public class CategoryController {
     }
 
     /**
-    * Método para borrar una {@link com.ccsw.tutorial.category.model.Category}
-    * @param id
-    */
+     * Método para borrar una {@link Category}
+     *
+     * @param id PK de la entidad
+     */
+    @Operation(summary = "Delete", description = "Method that deletes a Category")
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
-    public void delete(@PathVariable("id") Long id) {
+    public void delete(@PathVariable("id") Long id) throws Exception {
 
         this.categoryService.delete(id);
-
     }
+
 }

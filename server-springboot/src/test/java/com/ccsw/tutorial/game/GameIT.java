@@ -1,10 +1,13 @@
 package com.ccsw.tutorial.game;
 
+import com.ccsw.tutorial.author.model.AuthorDto;
+import com.ccsw.tutorial.category.model.CategoryDto;
+import com.ccsw.tutorial.game.model.GameDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -13,22 +16,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.ccsw.tutorial.author.model.AuthorDto;
-import com.ccsw.tutorial.category.model.CategoryDto;
-import com.ccsw.tutorial.game.model.GameDto;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class GameIT {
 
    public static final String LOCALHOST = "http://localhost:";
-   public static final String SERVICE_PATH = "/game/";
+   public static final String SERVICE_PATH = "/game";
 
    public static final Long EXISTS_GAME_ID = 1L;
    public static final Long NOT_EXISTS_GAME_ID = 0L;
@@ -231,7 +231,7 @@ public class GameIT {
       assertNotNull(response);
       assertEquals(0, response.getBody().size());
 
-      restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + EXISTS_GAME_ID, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
+      restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + "/" + EXISTS_GAME_ID, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
 
       response = restTemplate.exchange(getUrlWithParams(), HttpMethod.GET, null, responseType, params);
 
@@ -246,7 +246,7 @@ public class GameIT {
       GameDto dto = new GameDto();
       dto.setTitle(NEW_TITLE);
 
-      ResponseEntity<?> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + NOT_EXISTS_GAME_ID, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
+      ResponseEntity<?> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + "/" + NOT_EXISTS_GAME_ID, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
 
       assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
    }

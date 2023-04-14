@@ -1,28 +1,20 @@
 package com.ccsw.tutorial.author.model;
 
-import org.springframework.data.domain.Pageable;
+import com.ccsw.tutorial.common.pagination.PageableRequest;
 
 /**
-* @author ccsw
-*/
+ * @author ccsw
+ *
+ */
 public class AuthorSearchDto {
 
-   private Pageable pageable;
+    private PageableRequest pageable;
 
-   /**
-   * @return pageable
-   */
-   public Pageable getPageable() {
+    public PageableRequest getPageable() {
+        return pageable;
+    }
 
-      return this.pageable;
-   }
-
-   /**
-   * @param pageable new value of {@link #getPageable}.
-   */
-   public void setPageable(Pageable pageable) {
-
-      this.pageable = pageable;
-   }
-
+    public void setPageable(PageableRequest pageable) {
+        this.pageable = pageable;
+    }
 }

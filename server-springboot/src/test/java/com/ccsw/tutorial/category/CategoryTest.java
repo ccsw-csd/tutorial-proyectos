@@ -1,16 +1,13 @@
 package com.ccsw.tutorial.category;
 
+import com.ccsw.tutorial.category.model.Category;
+import com.ccsw.tutorial.category.model.CategoryDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import com.ccsw.tutorial.category.CategoryRepository;
-import com.ccsw.tutorial.category.CategoryServiceImpl;
-import com.ccsw.tutorial.category.model.Category;
-import com.ccsw.tutorial.category.model.CategoryDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +96,10 @@ public class CategoryTest {
    }
 
    @Test
-   public void deleteExistsCategoryIdShouldDelete() {
+   public void deleteExistsCategoryIdShouldDelete() throws Exception {
+
+      Category category = mock(Category.class);
+      when(categoryRepository.findById(EXISTS_CATEGORY_ID)).thenReturn(Optional.of(category));
 
       categoryService.delete(EXISTS_CATEGORY_ID);
 

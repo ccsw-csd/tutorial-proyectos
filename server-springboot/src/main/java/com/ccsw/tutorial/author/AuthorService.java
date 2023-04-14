@@ -1,49 +1,54 @@
 package com.ccsw.tutorial.author;
 
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-
 import com.ccsw.tutorial.author.model.Author;
 import com.ccsw.tutorial.author.model.AuthorDto;
 import com.ccsw.tutorial.author.model.AuthorSearchDto;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 /**
-* @author ccsw
-*/
+ * @author ccsw
+ *
+ */
 public interface AuthorService {
 
-   /**
-    * Recupera un {@link com.ccsw.tutorial.author.model.Author} a través de su ID
-    * @param id
-    * @return
-    */
-   Author get(Long id);
+    /**
+     * Recupera un {@link Author} a través de su ID
+     *
+     * @param id PK de la entidad
+     * @return {@link Author}
+     */
+    Author get(Long id);
 
-   /**
-    * Método para recuperar un listado paginado de {@link com.ccsw.tutorial.author.model.Author}
-    * @param dto
-    * @return
-    */
-   Page<Author> findPage(AuthorSearchDto dto);
+    /**
+     * Método para recuperar un listado paginado de {@link Author}
+     *
+     * @param dto dto de búsqueda
+     * @return {@link Page} de {@link Author}
+     */
+    Page<Author> findPage(AuthorSearchDto dto);
 
-   /**
-    * Método para crear o actualizar un {@link com.ccsw.tutorial.author.model.Author}
-    * @param id
-    * @param data
-    */
-   void save(Long id, AuthorDto data);
+    /**
+     * Método para crear o actualizar un {@link Author}
+     *
+     * @param id PK de la entidad
+     * @param dto datos de la entidad
+     */
+    void save(Long id, AuthorDto dto);
 
-   /**
-    * Método para crear o actualizar un {@link com.ccsw.tutorial.author.model.Author}
-    * @param id
-    */
-   void delete(Long id);
+    /**
+     * Método para crear o actualizar un {@link Author}
+     *
+     * @param id PK de la entidad
+     */
+    void delete(Long id) throws Exception;
 
-   /**
-    * Recupera un listado de autores
-    * @return
-    */
-   List<Author> findAll();
+    /**
+     * Recupera un listado de autores {@link Author}
+     *
+     * @return {@link List} de {@link Author}
+     */
+    List<Author> findAll();
 
 }
