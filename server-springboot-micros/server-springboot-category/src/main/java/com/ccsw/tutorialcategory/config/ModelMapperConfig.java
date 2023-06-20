@@ -1,6 +1,6 @@
 package com.ccsw.tutorialcategory.config;
 
-import org.dozer.DozerBeanMapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,12 +9,12 @@ import org.springframework.context.annotation.Configuration;
  *
  */
 @Configuration
-public class BeanDozerConfig {
+public class ModelMapperConfig {
 
     @Bean
-    public DozerBeanMapper getDozerBeanMapper() {
+    public ModelMapper getModelMapper() {
 
-        return new DozerBeanMapper();
+        return new ModelMapper();
     }
 
 }
