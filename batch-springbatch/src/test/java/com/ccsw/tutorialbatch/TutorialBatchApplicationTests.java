@@ -1,0 +1,13 @@
+package com.ccsw.tutorialbatch;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class TutorialBatchApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
