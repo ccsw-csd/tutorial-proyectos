@@ -10,10 +10,11 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
-import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +28,7 @@ import javax.sql.DataSource;
 public class CategoryBatchConfiguration {
 
     @Bean
-    public FlatFileItemReader<Category> readerCategory() {
+    public ItemReader<Category> readerCategory() {
         return new FlatFileItemReaderBuilder<Category>().name("categoryItemReader")
                 .resource(new ClassPathResource("category-list.csv"))
                 .delimited()
@@ -39,13 +40,13 @@ public class CategoryBatchConfiguration {
     }
 
     @Bean
-    public CategoryItemProcessor processorCategory() {
+    public ItemProcessor<Category, Category> processorCategory() {
 
         return new CategoryItemProcessor();
     }
 
     @Bean
-    public JdbcBatchItemWriter<Category> writerCategory(DataSource dataSource) {
+    public ItemWriter<Category> writerCategory(DataSource dataSource) {
         return new JdbcBatchItemWriterBuilder<Category>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                 .sql("INSERT INTO category (name, type, characteristics) VALUES (:name, :type, :characteristics)")
@@ -54,11 +55,11 @@ public class CategoryBatchConfiguration {
     }
 
     @Bean
-    public Step step1Category(JobRepository jobRepository, PlatformTransactionManager transactionManager, JdbcBatchItemWriter<Category> writerCategory) {
+    public Step step1Category(JobRepository jobRepository, PlatformTransactionManager transactionManager, ItemReader<Category> readerCategory, ItemProcessor<Category, Category> processorCategory, ItemWriter<Category> writerCategory) {
         return new StepBuilder("step1Category", jobRepository)
                 .<Category, Category> chunk(10, transactionManager)
-                .reader(readerCategory())
-                .processor(processorCategory())
+                .reader(readerCategory)
+                .processor(processorCategory)
                 .writer(writerCategory)
                 .build();
     }

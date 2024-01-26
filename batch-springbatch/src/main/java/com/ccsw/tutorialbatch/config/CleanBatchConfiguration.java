@@ -7,6 +7,7 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
@@ -16,7 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class CleanBatchConfiguration {
 
     @Bean
-    public CleanTasklet cleanTasklet() {
+    public Tasklet taskletClean() {
         CleanTasklet tasklet = new CleanTasklet();
 
         tasklet.setDirectoryResource(new FileSystemResource("target/test-outputs"));
@@ -25,9 +26,9 @@ public class CleanBatchConfiguration {
     }
 
     @Bean
-    public Step step1Clean(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+    public Step step1Clean(JobRepository jobRepository, PlatformTransactionManager transactionManager, Tasklet taskletClean) {
         return new StepBuilder("step1Clean", jobRepository)
-                .tasklet(cleanTasklet(), transactionManager)
+                .tasklet(taskletClean, transactionManager)
                 .build();
     }
 

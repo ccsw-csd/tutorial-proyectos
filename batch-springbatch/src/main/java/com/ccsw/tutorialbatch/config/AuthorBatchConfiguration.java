@@ -9,6 +9,9 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
@@ -25,7 +28,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class AuthorBatchConfiguration {
 
     @Bean
-    public FlatFileItemReader<Author> readerAuthor() {
+    public ItemReader<Author> readerAuthor() {
         return new FlatFileItemReaderBuilder<Author>().name("authorItemReader")
                 .resource(new ClassPathResource("author-list.csv"))
                 .delimited()
@@ -37,13 +40,13 @@ public class AuthorBatchConfiguration {
     }
 
     @Bean
-    public AuthorItemProcessor processorAuthor() {
+    public ItemProcessor<Author, Author> processorAuthor() {
 
         return new AuthorItemProcessor();
     }
 
     @Bean
-    public FlatFileItemWriter<Author> writerAuthor() {
+    public ItemWriter<Author> writerAuthor() {
         return  new FlatFileItemWriterBuilder<Author>().name("writerAuthor")
                 .resource(new FileSystemResource("target/test-outputs/author-output.txt"))
                 .lineAggregator(new PassThroughLineAggregator<>())
@@ -51,12 +54,12 @@ public class AuthorBatchConfiguration {
     }
 
     @Bean
-    public Step step1Author(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+    public Step step1Author(JobRepository jobRepository, PlatformTransactionManager transactionManager, ItemReader<Author> readerAuthor, ItemProcessor<Author, Author> processorAuthor, ItemWriter<Author> writerAuthor) {
         return new StepBuilder("step1Author", jobRepository)
                 .<Author, Author> chunk(10, transactionManager)
-                .reader(readerAuthor())
-                .processor(processorAuthor())
-                .writer(writerAuthor())
+                .reader(readerAuthor)
+                .processor(processorAuthor)
+                .writer(writerAuthor)
                 .build();
     }
 
