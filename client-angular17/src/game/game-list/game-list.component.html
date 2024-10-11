@@ -1,0 +1,44 @@
+<div class="container">
+  <h1>Catálogo de juegos</h1>
+
+  <div class="filters">
+    <form>
+      <mat-form-field>
+        <mat-label>Título del juego</mat-label>
+        <input
+          type="text"
+          matInput
+          placeholder="Título del juego"
+          [(ngModel)]="filterTitle"
+          name="title"
+        />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Categoría del juego</mat-label>
+        <mat-select disableRipple [(ngModel)]="filterCategory" name="category">
+          @for (category of categories; track category.id) {
+          <mat-option [value]="category">{{ category.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </form>
+
+    <div class="buttons">
+      <button mat-stroked-button (click)="onCleanFilter()">Limpiar</button>
+      <button mat-stroked-button (click)="onSearch()">Filtrar</button>
+    </div>
+  </div>
+
+  <div class="game-list">
+    @for (game of games; track game.id) {
+        <app-game-item (click)="editGame(game)" [game]="game" />
+    }
+  </div>
+
+  <div class="buttons">
+    <button mat-flat-button color="primary" (click)="createGame()">
+      Nuevo juego
+    </button>
+  </div>
+</div>
