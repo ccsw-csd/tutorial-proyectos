@@ -1,0 +1,119 @@
+services:
+  tutorial-eureka:
+    build:
+      context: ./server-springboot-micros/server-springboot-eureka
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - backend-network
+    healthcheck:
+      test: "curl -f http://localhost:8761/actuator/health || exit 1"
+      interval: 40s
+      timeout: 10s
+      retries: 3
+
+  tutorial-gateway:
+    build:
+      context: ./server-springboot-micros/server-springbbot-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - backend-network
+    depends_on:
+      tutorial-eureka:
+        condition: service_healthy
+    healthcheck:
+      test: "curl -f http://localhost:8080/actuator/health || exit 1"
+      interval: 40s
+      timeout: 10s
+      retries: 3
+
+  tutorial-category:
+    build:
+      context: ./server-springboot-micros/server-springboot-category
+      dockerfile: Dockerfile
+    ports:
+      - "8091:8091"
+    networks:
+      - backend-network
+    depends_on:
+      tutorial-eureka:
+        condition: service_healthy
+      tutorial-gateway:
+        condition: service_healthy
+    healthcheck:
+      test: "curl -f http://localhost:8091/actuator/health || exit 1"
+      interval: 40s
+      timeout: 10s
+      retries: 3
+
+  tutorial-author:
+    build:
+      context: ./server-springboot-micros/server-springboot-author
+      dockerfile: Dockerfile
+    ports:
+      - "8092:8092"
+    networks:
+      - backend-network
+    depends_on:
+      tutorial-eureka:
+        condition: service_healthy
+      tutorial-gateway:
+        condition: service_healthy
+    healthcheck:
+      test: "curl -f http://localhost:8092/actuator/health || exit 1"
+      interval: 40s
+      timeout: 10s
+      retries: 3
+
+  tutorial-game:
+    build:
+      context: ./server-springboot-micros/server-springboot-game
+      dockerfile: Dockerfile
+    ports:
+      - "8093:8093"
+    networks:
+      - backend-network
+    depends_on:
+      tutorial-eureka:
+        condition: service_healthy
+      tutorial-gateway:
+        condition: service_healthy
+      tutorial-category:
+        condition: service_healthy
+      tutorial-author:
+        condition: service_healthy
+    healthcheck:
+      test: "curl -f http://localhost:8093/actuator/health || exit 1"
+      interval: 40s
+      timeout: 10s
+      retries: 3
+
+  tutorial-front:
+    build:
+      context: ./client-angular17
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    networks:
+      - backend-network
+    depends_on:
+      tutorial-eureka:
+        condition: service_healthy
+      tutorial-gateway:
+        condition: service_healthy
+      tutorial-category:
+        condition: service_healthy
+      tutorial-author:
+        condition: service_healthy
+    healthcheck:
+      test: "curl -f http://localhost:4200/actuator/health || exit 1"
+      interval: 40s
+      timeout: 10s
+      retries: 3
+
+networks:
+  backend-network:
+    driver: bridge
