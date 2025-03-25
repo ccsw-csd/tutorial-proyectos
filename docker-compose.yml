@@ -8,9 +8,9 @@ services:
     networks:
       - backend-network
     environment:
-      eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka/
+      eureka.client.serviceUrl.defaultZone: http://tutorial-eureka:8761/eureka/
     healthcheck:
-      test: "curl -f http://localhost:8761/actuator/health || exit 1"
+      test: "curl -f http://tutorial-eureka:8761/actuator/health || exit 1"
       interval: 40s
       timeout: 10s
       retries: 3
@@ -27,9 +27,9 @@ services:
       tutorial-eureka:
         condition: service_healthy
     environment:
-      eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka/
+      eureka.client.serviceUrl.defaultZone: http://tutorial-eureka:8761/eureka/
     healthcheck:
-      test: "curl -f http://localhost:8080/actuator/health || exit 1"
+      test: "curl -f http://tutorial-gateway:8080/actuator/health || exit 1"
       interval: 40s
       timeout: 10s
       retries: 3
@@ -48,9 +48,9 @@ services:
       tutorial-gateway:
         condition: service_healthy
     environment:
-      eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka/
+      eureka.client.serviceUrl.defaultZone: http://tutorial-eureka:8761/eureka/
     healthcheck:
-      test: "curl -f http://localhost:8091/actuator/health || exit 1"
+      test: "curl -f http://tutorial-category:8091/actuator/health || exit 1"
       interval: 40s
       timeout: 10s
       retries: 3
@@ -69,9 +69,9 @@ services:
       tutorial-gateway:
         condition: service_healthy
     environment:
-      eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka/
+      eureka.client.serviceUrl.defaultZone: http://tutorial-eureka:8761/eureka/
     healthcheck:
-      test: "curl -f http://localhost:8092/actuator/health || exit 1"
+      test: "curl -f http://tutorial-author:8092/actuator/health || exit 1"
       interval: 40s
       timeout: 10s
       retries: 3
@@ -94,9 +94,9 @@ services:
       tutorial-author:
         condition: service_healthy
     environment:
-      eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka/
+      eureka.client.serviceUrl.defaultZone: http://tutorial-eureka:8761/eureka/
     healthcheck:
-      test: "curl -f http://localhost:8093/actuator/health || exit 1"
+      test: "curl -f http://tutorial-game:8093/actuator/health || exit 1"
       interval: 40s
       timeout: 10s
       retries: 3
@@ -121,9 +121,9 @@ services:
       tutorial-game:
         condition: service_healthy
     environment:
-      eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka/
+      eureka.client.serviceUrl.defaultZone: http://tutorial-eureka:8761/eureka/
     healthcheck:
-      test: "curl -f http://localhost:4200/actuator/health || exit 1"
+      test: "curl -f http://tutorial-front:4200/actuator/health || exit 1"
       interval: 40s
       timeout: 10s
       retries: 3
