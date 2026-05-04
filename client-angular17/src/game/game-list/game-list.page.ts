@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GameEditComponent } from '../game-edit/game-edit.component';
 import { GameService } from '../game.service';
@@ -29,44 +29,41 @@ import { GameItemComponent } from './game-item/game-item.component';
     MatSelectModule,
     GameItemComponent
   ],
-  templateUrl: './game-list.component.html',
-  styleUrl: './game-list.component.scss',
+  templateUrl: './game-list.page.html',
+  styleUrl: './game-list.page.scss',
 })
-export class GameListComponent implements OnInit {
-  categories: Category[];
-  games: Game[];
-  filterCategory: Category;
-  filterTitle: string;
+export class GameListPage implements OnInit {
+  protected readonly categories = signal<Category[]>([]);
+  protected readonly games = signal<Game[]>([]);
+  protected readonly filterCategory = signal<Category | null>(null);
+  protected readonly filterTitle = signal<string>('');
 
-  constructor(
-    private gameService: GameService,
-    private categoryService: CategoryService,
-    public dialog: MatDialog
-  ) {}
+  protected readonly gameService = inject(GameService);
+  protected readonly categoryService = inject(CategoryService);
+  protected readonly dialog = inject(MatDialog);
 
   ngOnInit(): void {
-    this.gameService.getGames().subscribe((games) => (this.games = games));
+    this.loadData();
+  }
 
-    this.categoryService
-      .getCategories()
-      .subscribe((categories) => (this.categories = categories));
+  loadData(): void {
+    this.gameService.getGames().subscribe((games) => this.games.set(games));
+    this.categoryService.getCategories().subscribe((categories) => this.categories.set(categories));
   }
 
   onCleanFilter(): void {
-    this.filterTitle = null;
-    this.filterCategory = null;
-
+    this.filterTitle.set('');
+    this.filterCategory.set(null);
     this.onSearch();
   }
 
   onSearch(): void {
-    const title = this.filterTitle;
-    const categoryId =
-      this.filterCategory != null ? this.filterCategory.id : null;
+    const title = this.filterTitle();
+    const categoryId = this.filterCategory() != null ? this.filterCategory().id : null;
 
     this.gameService
       .getGames(title, categoryId)
-      .subscribe((games) => (this.games = games));
+      .subscribe((games) => this.games.set(games));
   }
 
   createGame() {
@@ -75,7 +72,8 @@ export class GameListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      this.ngOnInit();
+      if (!result) return;
+      this.onSearch();
     });
   }
 
@@ -85,6 +83,7 @@ export class GameListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
       this.onSearch();
     });
   }

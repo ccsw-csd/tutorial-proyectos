@@ -17,7 +17,7 @@
       <mat-form-field>
         <mat-label>Categoría del juego</mat-label>
         <mat-select disableRipple [(ngModel)]="filterCategory" name="category">
-          @for (category of categories; track category.id) {
+          @for (category of categories(); track category.id) {
           <mat-option [value]="category">{{ category.name }}</mat-option>
           }
         </mat-select>
@@ -31,7 +31,7 @@
   </div>
 
   <div class="game-list">
-    @for (game of games; track game.id) {
+    @for (game of games(); track game.id) {
         <app-game-item (click)="editGame(game)" [game]="game" />
     }
   </div>

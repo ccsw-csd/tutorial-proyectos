@@ -1,5 +1,5 @@
 <div class="container">
-    @if (author.id) {
+    @if (id()) {
         <h1>Modificar autor</h1>
     } @else {
         <h1>Crear autor</h1>
@@ -8,18 +8,18 @@
     <form>
         <mat-form-field>
             <mat-label>Identificador</mat-label>
-            <input type="text" matInput placeholder="Identificador" [(ngModel)]="author.id" name="id" disabled>
+            <input type="text" matInput placeholder="Identificador" [(ngModel)]="id" name="id" disabled>
         </mat-form-field>
 
         <mat-form-field>
             <mat-label>Nombre</mat-label>
-            <input type="text" matInput placeholder="Nombre del autor" [(ngModel)]="author.name" name="name" required>
+            <input type="text" matInput placeholder="Nombre del autor" [(ngModel)]="name" name="name" required>
             <mat-error>El nombre no puede estar vacío</mat-error>
         </mat-form-field>
 
         <mat-form-field>
             <mat-label>Nacionalidad</mat-label>
-            <input type="text" matInput placeholder="Nacionalidad del autor" [(ngModel)]="author.nationality" name="nationality" required>
+            <input type="text" matInput placeholder="Nacionalidad del autor" [(ngModel)]="nationality" name="nationality" required>
             <mat-error>La nacionalidad no puede estar vacía</mat-error>
         </mat-form-field>
     </form>

@@ -1,5 +1,5 @@
 <div class="container">
-    @if (category.id) {
+    @if (id()) {
         <h1>Modificar categoría</h1>
     } @else {
         <h1>Crear categoría</h1>
@@ -8,12 +8,12 @@
     <form>
         <mat-form-field>
             <mat-label>Identificador</mat-label>
-            <input type="text" matInput placeholder="Identificador" [(ngModel)]="category.id" name="id" disabled>
+            <input type="text" matInput placeholder="Identificador" [(ngModel)]="id" name="id" disabled>
         </mat-form-field>
 
         <mat-form-field>
             <mat-label>Nombre</mat-label>
-            <input type="text" matInput placeholder="Nombre de categoría" [(ngModel)]="category.name" name="name" required>
+            <input type="text" matInput placeholder="Nombre de categoría" [(ngModel)]="name" name="name" required>
             <mat-error>El nombre no puede estar vacío</mat-error>
         </mat-form-field>
     </form>
