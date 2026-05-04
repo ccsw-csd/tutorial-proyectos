@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { Game } from '../../model/Game';
 import {MatCardModule} from '@angular/material/card';
 @Component({
@@ -9,5 +9,5 @@ import {MatCardModule} from '@angular/material/card';
   styleUrl: './game-item.component.scss'
 })
 export class GameItemComponent {
-  @Input() game: Game;
+  protected readonly game = input.required<Game>();
 }

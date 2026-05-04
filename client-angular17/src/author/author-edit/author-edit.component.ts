@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthorService } from '../author.service';
 import { Author } from '../model/Author';
@@ -15,25 +15,36 @@ import { MatInputModule } from '@angular/material/input';
   styleUrl: './author-edit.component.scss',
 })
 export class AuthorEditComponent implements OnInit {
-  author: Author;
+  protected readonly authorService = inject(AuthorService);
+  protected readonly dialogRef = inject(MatDialogRef<AuthorEditComponent>);
+  protected readonly data = inject(MAT_DIALOG_DATA);
 
-  constructor(
-    public dialogRef: MatDialogRef<AuthorEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private authorService: AuthorService
-  ) {}
+  protected readonly id = signal<number | null>(null);
+  protected readonly name = signal<string | null>(null);
+  protected readonly nationality = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.author = this.data.author ? Object.assign({}, this.data.author) : new Author();
+    this.loadFormData(this.data.author ?? null);
+  }
+
+  loadFormData(initialData: Author | null): void {
+    this.id.set(initialData?.id ?? null);
+    this.name.set(initialData?.name ?? null);
+    this.nationality.set(initialData?.nationality ?? null);
   }
 
   onSave() {
-    this.authorService.saveAuthor(this.author).subscribe(() => {
-      this.dialogRef.close();
+    const author: Author = {
+      id: this.id(),
+      name: this.name(),
+      nationality: this.nationality(),
+    };
+    this.authorService.saveAuthor(author).subscribe(() => {
+      this.dialogRef.close(true);
     });
   }
 
   onClose() {
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 }

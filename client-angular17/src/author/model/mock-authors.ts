@@ -1,6 +1,7 @@
-import { AuthorPage } from './AuthorPage';
+import { PaginatedData } from '../../core/model/page/PaginatedData';
+import { Author } from './Author';
 
-export const AUTHOR_DATA: AuthorPage = {
+export const AUTHOR_DATA: PaginatedData<Author> = {
   content: [
     { id: 1, name: 'Klaus Teuber', nationality: 'Alemania' },
     { id: 2, name: 'Matt Leacock', nationality: 'Estados Unidos' },

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -15,10 +15,10 @@ import { MatIconModule } from '@angular/material/icon';
   selector: 'app-author-list',
   standalone: true,
   imports: [MatButtonModule, MatIconModule, MatTableModule, CommonModule, MatPaginatorModule],
-  templateUrl: './author-list.component.html',
-  styleUrl: './author-list.component.scss',
+  templateUrl: './author-list.page.html',
+  styleUrl: './author-list.page.scss',
 })
-export class AuthorListComponent implements OnInit {
+export class AuthorListPage implements OnInit {
   pageNumber: number = 0;
   pageSize: number = 5;
   totalElements: number = 0;
@@ -26,7 +26,8 @@ export class AuthorListComponent implements OnInit {
   dataSource = new MatTableDataSource<Author>();
   displayedColumns: string[] = ['id', 'name', 'nationality', 'action'];
 
-  constructor(private authorService: AuthorService, public dialog: MatDialog) {}
+  protected readonly authorService = inject(AuthorService);
+  protected readonly dialog = inject(MatDialog);
 
   ngOnInit(): void {
     this.loadPage();
@@ -63,7 +64,8 @@ export class AuthorListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      this.ngOnInit();
+      if (!result) return;
+      this.loadPage();
     });
   }
 
@@ -73,7 +75,8 @@ export class AuthorListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      this.ngOnInit();
+      if (!result) return;
+      this.loadPage();
     });
   }
 
@@ -88,8 +91,8 @@ export class AuthorListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.authorService.deleteAuthor(author.id).subscribe((result) => {
-          this.ngOnInit();
+        this.authorService.deleteAuthor(author.id).subscribe(() => {
+          this.loadPage();
         });
       }
     });

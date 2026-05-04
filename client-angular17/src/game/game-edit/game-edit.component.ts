@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GameService } from '../game.service';
 import { Game } from '../model/Game';
@@ -20,55 +20,54 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrl: './game-edit.component.scss',
 })
 export class GameEditComponent implements OnInit {
-  game: Game;
-  authors: Author[];
-  categories: Category[];
+  protected readonly id = signal<number | null>(null);
+  protected readonly title = signal<string | null>(null);
+  protected readonly age = signal<number | null>(null);
+  protected readonly categoryId = signal<number | null>(null);
+  protected readonly authorId = signal<number | null>(null);
+  protected readonly categories = signal<Category[]>([]);
+  protected readonly authors = signal<Author[]>([]);
 
-  constructor(
-    public dialogRef: MatDialogRef<GameEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private gameService: GameService,
-    private categoryService: CategoryService,
-    private authorService: AuthorService
-  ) {}
+  protected readonly dialogRef = inject(MatDialogRef<GameEditComponent>);
+  protected readonly data = inject(MAT_DIALOG_DATA);
+  protected readonly gameService = inject(GameService);
+  protected readonly categoryService = inject(CategoryService);
+  protected readonly authorService = inject(AuthorService);
 
   ngOnInit(): void {
-    this.game = this.data.game ? Object.assign({}, this.data.game) : new Game();
+    this.loadFormData(this.data.game ?? null);
+  }
 
-    this.categoryService.getCategories().subscribe((categories) => {
-      this.categories = categories;
+  loadFormData(initialData: Game | null): void {
+    this.id.set(initialData?.id ?? null);
+    this.title.set(initialData?.title ?? null);
+    this.age.set(initialData?.age ?? null);
 
-      if (this.game.category != null) {
-        const categoryFilter: Category[] = categories.filter(
-          (category) => category.id == this.data.game.category.id
-        );
-        if (categoryFilter != null) {
-          this.game.category = categoryFilter[0];
-        }
-      }
+    this.categoryId.set(initialData?.category?.id ?? null);
+    this.categoryService.getCategories().subscribe((cats) => {
+      this.categories.set(cats);
     });
 
-    this.authorService.getAllAuthors().subscribe((authors) => {
-      this.authors = authors;
-
-      if (this.game.author != null) {
-        const authorFilter: Author[] = authors.filter(
-          (author) => author.id == this.data.game.author.id
-        );
-        if (authorFilter != null) {
-          this.game.author = authorFilter[0];
-        }
-      }
+    this.authorId.set(initialData?.author?.id ?? null);
+    this.authorService.getAllAuthors().subscribe((auts) => {
+      this.authors.set(auts);
     });
   }
 
   onSave() {
-    this.gameService.saveGame(this.game).subscribe((result) => {
-      this.dialogRef.close();
+    const game: Game = {
+      id: this.id(),
+      title: this.title(),
+      age: this.age(),
+      category: this.categories().find(c => c.id === this.categoryId()) ?? null,
+      author: this.authors().find(a => a.id === this.authorId()) ?? null,
+    };
+    this.gameService.saveGame(game).subscribe(() => {
+      this.dialogRef.close(true);
     });
   }
 
   onClose() {
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 }

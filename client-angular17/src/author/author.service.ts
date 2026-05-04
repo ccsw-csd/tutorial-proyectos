@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Pageable } from '../core/model/page/Pageable';
 import { Author } from './model/Author';
-import { AuthorPage } from './model/AuthorPage';
+import { PaginatedData } from '../core/model/page/PaginatedData';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -13,8 +13,8 @@ export class AuthorService {
 
   private baseUrl = 'http://localhost:8080/author';
 
-  getAuthors(pageable: Pageable): Observable<AuthorPage> {
-    return this.http.post<AuthorPage>(this.baseUrl, { pageable: pageable });
+  getAuthors(pageable: Pageable): Observable<PaginatedData<Author>> {
+    return this.http.post<PaginatedData<Author>>(this.baseUrl, { pageable: pageable });
   }
 
   saveAuthor(author: Author): Observable<Author> {
