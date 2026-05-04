@@ -30,10 +30,6 @@ export class AuthorListPage implements OnInit {
   protected readonly dialog = inject(MatDialog);
 
   ngOnInit(): void {
-    this.loadData();
-  }
-
-  loadData(): void {
     this.loadPage();
   }
 
@@ -69,7 +65,7 @@ export class AuthorListPage implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return;
-      this.loadData();
+      this.loadPage();
     });
   }
 
@@ -80,7 +76,7 @@ export class AuthorListPage implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return;
-      this.loadData();
+      this.loadPage();
     });
   }
 
@@ -96,7 +92,7 @@ export class AuthorListPage implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.authorService.deleteAuthor(author.id).subscribe(() => {
-          this.loadData();
+          this.loadPage();
         });
       }
     });

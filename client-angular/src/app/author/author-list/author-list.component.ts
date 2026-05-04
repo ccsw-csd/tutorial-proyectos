@@ -28,10 +28,10 @@ export class AuthorListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-      this.loadPage();
+      this.loadData();
   }
 
-  loadPage(event?: PageEvent) {
+  loadData(event?: PageEvent) {
 
       let pageable : Pageable =  {
           pageNumber: this.pageNumber,
