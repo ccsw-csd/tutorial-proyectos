@@ -1,6 +1,6 @@
 import { Pageable } from './Pageable';
 
-export class PaginatedData<TData> {
+export interface PaginatedData<TData> {
     content: TData[];
     pageable: Pageable;
     totalElements: number;

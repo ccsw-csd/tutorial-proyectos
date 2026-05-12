@@ -1,7 +1,7 @@
 import { Author } from "../../author/model/Author";
 import { Category } from "../../category/model/Category";
 
-export class Game {
+export interface Game {
     id: number;
     title: string;
     age: number;

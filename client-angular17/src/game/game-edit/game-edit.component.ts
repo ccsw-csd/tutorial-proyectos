@@ -55,13 +55,23 @@ export class GameEditComponent implements OnInit {
   }
 
   onSave() {
-    const game: Game = {
-      id: this.id(),
-      title: this.title(),
-      age: this.age(),
-      category: this.categories().find(c => c.id === this.categoryId()) ?? null,
-      author: this.authors().find(a => a.id === this.authorId()) ?? null,
-    };
+    const id = this.id();
+    const title = this.title(); 
+    const age = this.age(); 
+    const categoryId = this.categoryId(); 
+    const authorId = this.authorId(); 
+
+    if(!title || !age || !categoryId || !authorId) {    
+      return;
+    }
+
+    const game = {
+      id,
+      title,
+      age,
+      category: this.categories().find(c => c.id === categoryId) ?? null,
+      author: this.authors().find(a => a.id === authorId) ?? null,
+    } as Game;
     this.gameService.saveGame(game).subscribe(() => {
       this.dialogRef.close(true);
     });

@@ -34,11 +34,19 @@ export class AuthorEditComponent implements OnInit {
   }
 
   onSave() {
-    const author: Author = {
-      id: this.id(),
-      name: this.name(),
-      nationality: this.nationality(),
-    };
+    const id = this.id();
+    const name = this.name();
+    const nationality = this.nationality();
+
+    if(!name || !nationality ) {
+      return;
+    }
+
+    const author = {
+      id,
+      name,
+      nationality,
+    } as Author;
     this.authorService.saveAuthor(author).subscribe(() => {
       this.dialogRef.close(true);
     });
