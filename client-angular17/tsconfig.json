@@ -17,7 +17,8 @@
     "lib": [
       "ES2022",
       "dom"
-    ]
+    ],
+    "strictNullChecks": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false
