@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { validateFields } from '../../core/helpers/validation.helper';
 
 @Component({
   selector: 'app-author-edit',
@@ -34,11 +35,22 @@ export class AuthorEditComponent implements OnInit {
   }
 
   onSave() {
-    const author: Author = {
-      id: this.id(),
-      name: this.name(),
-      nationality: this.nationality(),
-    };
+    const id = this.id();
+    const name = this.name();
+    const nationality = this.nationality();
+
+    const requiredFields = ["name", "nationality"] as const
+    const data = { name, nationality }
+
+    if (!validateFields(data, requiredFields)) {
+      return;
+    }
+
+    const author = {
+      id,
+      name,
+      nationality,
+    } as Author;
     this.authorService.saveAuthor(author).subscribe(() => {
       this.dialogRef.close(true);
     });

@@ -32,7 +32,14 @@ export class CategoryEditComponent implements OnInit {
   }
 
   onSave() {
-    const category: Category = { id: this.id(), name: this.name() };
+    const id = this.id();
+    const name = this.name();
+
+    if (!name) {
+      return;
+    }
+
+    const category = { id, name } as Category;
     this.categoryService.saveCategory(category).subscribe(() => {
       this.dialogRef.close(true);
     });

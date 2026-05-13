@@ -59,7 +59,7 @@ export class GameListPage implements OnInit {
 
   onSearch(): void {
     const title = this.filterTitle();
-    const categoryId = this.filterCategory() != null ? this.filterCategory().id : null;
+    const categoryId = this.filterCategory()?.id ?? undefined;
 
     this.gameService
       .getGames(title, categoryId)

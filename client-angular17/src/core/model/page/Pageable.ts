@@ -1,6 +1,6 @@
 import { SortPage } from "./SortPage";
 
-export class Pageable {
+export interface Pageable {
     pageNumber: number;
     pageSize: number;
     sort: SortPage[];
