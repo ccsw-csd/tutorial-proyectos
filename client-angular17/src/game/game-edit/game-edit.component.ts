@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { validateFields } from '../../core/helpers/validation.helper';
 
 @Component({
   selector: 'app-game-edit',
@@ -61,7 +62,10 @@ export class GameEditComponent implements OnInit {
     const categoryId = this.categoryId(); 
     const authorId = this.authorId(); 
 
-    if(!title || !age || !categoryId || !authorId) {    
+    const requiredFields = ["title", "age", "categoryId", "authorId"] as const
+    const data = { title, age, categoryId, authorId }
+    
+    if (!validateFields(data, requiredFields)) {
       return;
     }
 

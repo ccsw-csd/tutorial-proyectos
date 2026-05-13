@@ -35,7 +35,7 @@ export class CategoryEditComponent implements OnInit {
     const id = this.id();
     const name = this.name();
 
-    if(!name) {
+    if (!name) {
       return;
     }
 
